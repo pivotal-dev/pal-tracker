@@ -1,6 +1,6 @@
 ---
 applications:
-- name: pal-tracker-production
+- name: pal-tracker
   path: src/PalTracker/bin/Release/netcoreapp2.1/publish/
   routes:
   - route: https://pal-tracker-cheerful-cheetah-production19.apps.evans.pal.pivotal.io/
