@@ -89,7 +89,7 @@ jobs:
             cf push -f manifest-$ENVIRONMENT.yml
 
 workflows:
-  version: 2
+  version: 2.1
   deployment-pipeline:
     jobs:
       - build
