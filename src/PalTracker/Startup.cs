@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Steeltoe.CloudFoundry.Connector.MySql.EFCore;
+using Steeltoe.Management.CloudFoundry;
+using Steeltoe.Management.Endpoint.CloudFoundry;
+using Steeltoe.Common.HealthChecks;
+using Steeltoe.Management.Endpoint.Info;
 
 namespace PalTracker
 {
@@ -22,6 +26,7 @@ namespace PalTracker
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddCloudFoundryActuators(Configuration);
             services.AddSingleton(sp => new WelcomeMessage(Configuration.GetValue<string>("WELCOME_MESSAGE", 
                                                 "WELCOME_MESSAGE not configured.")
                                                 ));
@@ -33,6 +38,9 @@ namespace PalTracker
                                                 ));
 
             services.AddScoped<ITimeEntryRepository, MySqlTimeEntryRepository>();  
+            services.AddScoped<IHealthContributor, TimeEntryHealthContributor>();
+            services.AddSingleton<IOperationCounter<TimeEntry>, OperationCounter<TimeEntry>>();
+            services.AddSingleton<IInfoContributor, TimeEntryInfoContributor>();
             services.AddDbContext<TimeEntryContext>(options => options.UseMySql(Configuration));                                             
         }
 
@@ -50,6 +58,7 @@ namespace PalTracker
 
             app.UseHttpsRedirection();
             app.UseMvc();
+            app.UseCloudFoundryActuators();
         }
     }
 }
